@@ -37,5 +37,5 @@ func Register(ctx *fiber.Ctx) error {
 		return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, err.Error())
 	}
 
-	return nil
+	return make_response.MakeInfoResponse(ctx, fiber.StatusOK, 0, "Registration was successful!")
 }
