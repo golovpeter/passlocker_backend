@@ -1,8 +1,8 @@
 package register
 
 import (
-	"1password_copy_project/internal/common/make_response"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/jmoiron/sqlx"
 )
 

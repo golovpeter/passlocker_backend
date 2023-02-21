@@ -1,10 +1,10 @@
 package configure_router
 
 import (
-	"1password_copy_project/internal/api/handlers/register"
-	"1password_copy_project/internal/api/middlewares/db_connect"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/golovpeter/passbox_backend/internal/api/handlers/register"
+	"github.com/golovpeter/passbox_backend/internal/api/middlewares/db_connect"
 )
 
 func ConfigureRouter(app *fiber.App) {

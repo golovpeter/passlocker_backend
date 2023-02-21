@@ -1,4 +1,4 @@
-module 1password_copy_project
+module github.com/golovpeter/passbox_backend
 
 go 1.19
 

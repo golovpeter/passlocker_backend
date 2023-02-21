@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"log"
 	"os"
 
-	"1password_copy_project/cmd/service/configure_router"
-	"github.com/gofiber/fiber/v2"
+	"github.com/golovpeter/passbox_backend/cmd/service/configure_router"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
