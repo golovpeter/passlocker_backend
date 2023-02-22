@@ -2,6 +2,7 @@ package register
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/golovpeter/passbox_backend/internal/common/hash_passwords"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/jmoiron/sqlx"
 )
@@ -17,7 +18,6 @@ func Register(ctx *fiber.Ctx) error {
 
 	if in.Email == "" || in.Password == "" {
 		return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "Incorrect data input")
-
 	}
 
 	elementExist := false
@@ -31,7 +31,12 @@ func Register(ctx *fiber.Ctx) error {
 		return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "User already registered!")
 	}
 
-	_, err = conn.Exec("insert into users (email, password) values ($1, $2)", in.Email, in.Password)
+	passwordHash, err := hash_passwords.HashPassword(in.Password)
+	if err != nil {
+		return err
+	}
+
+	_, err = conn.Exec("insert into users (email, password) values ($1, $2)", in.Email, passwordHash)
 
 	if err != nil {
 		return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, err.Error())
