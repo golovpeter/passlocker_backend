@@ -36,7 +36,7 @@ func Register(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = conn.Exec("insert into users (email, password) values ($1, $2)", in.Email, passwordHash)
+	_, err = conn.Exec("insert into users (email, password_hash) values ($1, $2)", in.Email, passwordHash)
 
 	if err != nil {
 		return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, err.Error())
