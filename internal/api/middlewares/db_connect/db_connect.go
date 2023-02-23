@@ -1,7 +1,6 @@
 package db_connect
 
 import (
-	"log"
 	"os"
 	"time"
 
@@ -13,7 +12,11 @@ func SetupDB() func(c *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		db, err := sqlx.Connect("pgx", os.Getenv("POSTGRESQL_URL"))
 		if err != nil {
-			log.Fatalln(err)
+			panic(err)
+		}
+
+		if err = db.Ping(); err != nil {
+			panic(err)
 		}
 
 		db.SetMaxOpenConns(10)
