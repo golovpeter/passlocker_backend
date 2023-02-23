@@ -3,6 +3,7 @@ package configure_router
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/golovpeter/passbox_backend/internal/api/handlers/login"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/register"
 	"github.com/golovpeter/passbox_backend/internal/api/middlewares/db_connect"
 )
@@ -16,4 +17,5 @@ func ConfigureRouter(app *fiber.App) {
 
 	// Authentication endpoints
 	app.Post("/register", register.Register)
+	app.Post("/login", login.Login)
 }
