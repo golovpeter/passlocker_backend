@@ -10,7 +10,7 @@ import (
 func Register(ctx *fiber.Ctx) error {
 	conn := ctx.Locals("dbConn").(*sqlx.DB)
 
-	var in RegisterIn
+	var in In
 
 	if err := ctx.BodyParser(&in); err != nil {
 		return make_response.MakeInfoResponse(ctx, fiber.StatusUnprocessableEntity, 1, err.Error())

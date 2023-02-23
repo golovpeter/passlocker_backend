@@ -1,6 +1,6 @@
 package register
 
-type RegisterIn struct {
+type In struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
