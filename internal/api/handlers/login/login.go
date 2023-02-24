@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/golovpeter/passbox_backend/internal/common/authTokens"
+	"github.com/golovpeter/passbox_backend/internal/common/auth_tokens"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/jmoiron/sqlx"
 )
@@ -55,15 +55,15 @@ func Login(ctx *fiber.Ctx) error {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, err.Error())
 		}
 
-		err = authTokens.ValidateToken(tokens.refreshToken)
+		err = auth_tokens.ValidateToken(tokens.refreshToken)
 
 		if err != nil && errors.Is(err, jwt.ErrTokenExpired) {
-			newAccessToken, genErr := authTokens.GenerateJWT(in.Email)
+			newAccessToken, genErr := auth_tokens.GenerateJWT(in.Email)
 			if genErr != nil {
 				return err
 			}
 
-			newRefreshToken, genErr := authTokens.GenerateRefreshJWT()
+			newRefreshToken, genErr := auth_tokens.GenerateRefreshJWT()
 			if genErr != nil {
 				return err
 			}
@@ -88,12 +88,12 @@ func Login(ctx *fiber.Ctx) error {
 		return ctx.JSON(response)
 	}
 
-	newAccessToken, err := authTokens.GenerateJWT(in.Email)
+	newAccessToken, err := auth_tokens.GenerateJWT(in.Email)
 	if err != nil {
 		return err
 	}
 
-	newRefreshToken, err := authTokens.GenerateRefreshJWT()
+	newRefreshToken, err := auth_tokens.GenerateRefreshJWT()
 	if err != nil {
 		return err
 	}

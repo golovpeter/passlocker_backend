@@ -1,4 +1,4 @@
-package authTokens
+package auth_tokens
 
 import (
 	"os"
