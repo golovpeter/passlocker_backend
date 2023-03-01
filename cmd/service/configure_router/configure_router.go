@@ -6,11 +6,11 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/login"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/register"
-	"github.com/golovpeter/passbox_backend/internal/api/middlewares/db_connect"
+	"github.com/jmoiron/sqlx"
 )
 
-func ConfigureRouter(app *fiber.App) {
-	// Middlewares
+func ConfigureRouter(app *fiber.App, db *sqlx.DB) {
+	//Middlewares
 	app.Use(logger.New(logger.Config{
 		Format: "[${ip}]:${port} ${time} ${status} - ${method} ${path}\n",
 	}))
@@ -20,9 +20,7 @@ func ConfigureRouter(app *fiber.App) {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
-	app.Use(db_connect.SetupDB())
-
-	// Authentication endpoints
-	app.Post("/register", register.Register)
-	app.Post("/login", login.Login)
+	//Authentication endpoints
+	app.Post("api/register", register.Register(db))
+	app.Post("api/auth/login", login.Login(db))
 }
