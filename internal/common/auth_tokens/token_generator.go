@@ -14,16 +14,18 @@ const (
 
 type tokenClaims struct {
 	jwt.RegisteredClaims
-	Email string
+	Email    string
+	DeviceID string
 }
 
-func GenerateJWT(email string) (string, error) {
+func GenerateJWT(email string, deviceID string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.RegisteredClaims{
 			ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(tokenTTL)},
 			IssuedAt:  &jwt.NumericDate{Time: time.Now()},
 		},
 		email,
+		deviceID,
 	})
 
 	return token.SignedString([]byte(os.Getenv("JWT_KEY")))
