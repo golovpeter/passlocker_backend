@@ -1,9 +1,11 @@
 package database
 
 import (
-	"github.com/jmoiron/sqlx"
 	"os"
 	"time"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jmoiron/sqlx"
 )
 
 func OpenConnection() *sqlx.DB {
