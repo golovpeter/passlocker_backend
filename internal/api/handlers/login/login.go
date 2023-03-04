@@ -48,7 +48,8 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		_, err = conn.Exec("insert into tokens values ($1, $2, $3, $4)", userId, newDeviceID, newAccessToken, newRefreshToken)
 
 		response := Out{
-			AccessToken: newAccessToken,
+			AccessToken:  newAccessToken,
+			RefreshToken: newRefreshToken,
 		}
 
 		return ctx.JSON(response)

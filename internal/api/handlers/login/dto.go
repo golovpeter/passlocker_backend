@@ -6,5 +6,6 @@ type In struct {
 }
 
 type Out struct {
-	AccessToken string `json:"access_token"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
