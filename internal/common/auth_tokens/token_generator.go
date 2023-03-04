@@ -31,9 +31,14 @@ func GenerateJWT(email string, deviceID string) (string, error) {
 	return token.SignedString([]byte(os.Getenv("JWT_KEY")))
 }
 
-func GenerateRefreshJWT() (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(refreshTokenTTL)},
+func GenerateRefreshJWT(email string, deviceID string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
+		jwt.RegisteredClaims{
+			ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(refreshTokenTTL)},
+			IssuedAt:  &jwt.NumericDate{Time: time.Now()},
+		},
+		email,
+		deviceID,
 	})
 
 	return token.SignedString([]byte(os.Getenv("JWT_KEY")))

@@ -40,7 +40,7 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return err
 		}
 
-		newRefreshToken, err := auth_tokens.GenerateRefreshJWT()
+		newRefreshToken, err := auth_tokens.GenerateRefreshJWT(in.Email, newDeviceID.String())
 		if err != nil {
 			return err
 		}
