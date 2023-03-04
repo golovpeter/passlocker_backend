@@ -22,3 +22,12 @@ func ValidateToken(inputToken string) error {
 
 	return nil
 }
+
+func GetTokenClaims(inputToken string) (jwt.MapClaims, error) {
+	claims := jwt.MapClaims{}
+	_, _ = jwt.ParseWithClaims(inputToken, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("SIGNINKEY")), nil
+	})
+
+	return claims, nil
+}

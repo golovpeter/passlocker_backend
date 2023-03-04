@@ -5,7 +5,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/login"
+	"github.com/golovpeter/passbox_backend/internal/api/handlers/refresh_tokens"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/register"
+	"github.com/golovpeter/passbox_backend/internal/api/middlewares/check_auth"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -20,7 +22,10 @@ func ConfigureRouter(app *fiber.App, db *sqlx.DB) {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
+	app.Use("/api/p/", check_auth.CheckAuth(db))
+
 	//Authentication endpoints
 	app.Post("api/register", register.Register(db))
 	app.Post("api/auth/login", login.Login(db))
+	app.Post("api/refresh-tokens", refresh_tokens.RefreshTokens(db))
 }
