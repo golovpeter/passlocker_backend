@@ -1,11 +1,11 @@
 package login
 
-type In struct {
+type loginIn struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type Out struct {
+type loginOut struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }

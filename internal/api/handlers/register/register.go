@@ -9,7 +9,7 @@ import (
 
 func Register(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		var in In
+		var in registerIn
 
 		if err := ctx.BodyParser(&in); err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusUnprocessableEntity, 1, err.Error())

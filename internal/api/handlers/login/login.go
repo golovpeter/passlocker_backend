@@ -10,7 +10,7 @@ import (
 
 func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		var in In
+		var in loginIn
 
 		if err := ctx.BodyParser(&in); err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusUnprocessableEntity, 1, err.Error())
@@ -47,7 +47,7 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 
 		_, err = conn.Exec("insert into tokens values ($1, $2, $3, $4)", userId, newDeviceID, newAccessToken, newRefreshToken)
 
-		response := Out{
+		response := loginOut{
 			AccessToken:  newAccessToken,
 			RefreshToken: newRefreshToken,
 		}
