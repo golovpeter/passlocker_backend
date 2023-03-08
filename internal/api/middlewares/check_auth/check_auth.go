@@ -11,6 +11,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// TODO: подумать, надо ли тут передавать refresh_token
+
 func CheckAuth(db *sqlx.DB) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 

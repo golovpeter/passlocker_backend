@@ -32,7 +32,7 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		var userId int
-		err = conn.Get(&userId, "select id from users where email = $1", in.Email)
+		err = conn.Get(&userId, "select user_id from users where email = $1", in.Email)
 
 		newDeviceID := uuid.New()
 		newAccessToken, err := auth_tokens.GenerateJWT(userId, in.Email, newDeviceID.String(), auth_tokens.TokenTTL)
@@ -46,6 +46,10 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		_, err = conn.Exec("insert into tokens values ($1, $2, $3, $4)", userId, newDeviceID, newAccessToken, newRefreshToken)
+
+		if err != nil {
+			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
+		}
 
 		response := loginOut{
 			AccessToken:  newAccessToken,

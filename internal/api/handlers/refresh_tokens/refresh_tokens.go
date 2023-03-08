@@ -10,6 +10,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// TODO: подумать, надо ли тут передавать access_token
+
 func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		refreshToken := ctx.Cookies("refresh_token")
@@ -47,7 +49,7 @@ func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		newAccessToken, err := auth_tokens.GenerateJWT(
-			claims["UserID"].(int),
+			int(claims["UserID"].(float64)),
 			claims["Email"].(string),
 			claims["DeviceID"].(string),
 			auth_tokens.TokenTTL,
@@ -58,7 +60,7 @@ func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		newRefreshToken, err := auth_tokens.GenerateJWT(
-			claims["UserID"].(int),
+			int(claims["UserID"].(float64)),
 			claims["Email"].(string),
 			claims["DeviceID"].(string),
 			auth_tokens.RefreshTokenTTL,
