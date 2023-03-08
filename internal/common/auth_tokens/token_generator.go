@@ -8,35 +8,24 @@ import (
 )
 
 const (
-	tokenTTL        = time.Minute * 15
-	refreshTokenTTL = time.Hour * 720
+	TokenTTL        = time.Minute * 15
+	RefreshTokenTTL = time.Hour * 720
 )
 
 type tokenClaims struct {
 	jwt.RegisteredClaims
+	UserID   int
 	Email    string
 	DeviceID string
 }
 
-func GenerateJWT(email string, deviceID string) (string, error) {
+func GenerateJWT(userID int, email string, deviceID string, expTime time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.RegisteredClaims{
-			ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(tokenTTL)},
+			ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(expTime)},
 			IssuedAt:  &jwt.NumericDate{Time: time.Now()},
 		},
-		email,
-		deviceID,
-	})
-
-	return token.SignedString([]byte(os.Getenv("JWT_KEY")))
-}
-
-func GenerateRefreshJWT(email string, deviceID string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
-		jwt.RegisteredClaims{
-			ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(refreshTokenTTL)},
-			IssuedAt:  &jwt.NumericDate{Time: time.Now()},
-		},
+		userID,
 		email,
 		deviceID,
 	})

@@ -47,17 +47,21 @@ func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		newAccessToken, err := auth_tokens.GenerateJWT(
+			claims["UserID"].(int),
 			claims["Email"].(string),
 			claims["DeviceID"].(string),
+			auth_tokens.TokenTTL,
 		)
 
 		if err != nil {
 			return err
 		}
 
-		newRefreshToken, err := auth_tokens.GenerateRefreshJWT(
+		newRefreshToken, err := auth_tokens.GenerateJWT(
+			claims["UserID"].(int),
 			claims["Email"].(string),
 			claims["DeviceID"].(string),
+			auth_tokens.RefreshTokenTTL,
 		)
 
 		if err != nil {

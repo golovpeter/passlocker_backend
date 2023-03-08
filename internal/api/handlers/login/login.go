@@ -35,12 +35,12 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		err = conn.Get(&userId, "select id from users where email = $1", in.Email)
 
 		newDeviceID := uuid.New()
-		newAccessToken, err := auth_tokens.GenerateJWT(in.Email, newDeviceID.String())
+		newAccessToken, err := auth_tokens.GenerateJWT(userId, in.Email, newDeviceID.String(), auth_tokens.TokenTTL)
 		if err != nil {
 			return err
 		}
 
-		newRefreshToken, err := auth_tokens.GenerateRefreshJWT(in.Email, newDeviceID.String())
+		newRefreshToken, err := auth_tokens.GenerateJWT(userId, in.Email, newDeviceID.String(), auth_tokens.RefreshTokenTTL)
 		if err != nil {
 			return err
 		}
