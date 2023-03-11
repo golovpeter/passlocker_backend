@@ -32,7 +32,7 @@ func DeletePassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		err = conn.Get(&passwordUserId, "select user_id from passwords where id = $1", in.PasswordID)
 
 		if passwordUserId == 0 {
-			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "there is no such note")
+			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "there is no such password")
 		}
 
 		if passwordUserId != int(claims["UserID"].(float64)) {
@@ -50,6 +50,6 @@ func DeletePassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
 		}
 
-		return make_response.MakeInfoResponse(ctx, fiber.StatusOK, 0, "note successful deleted")
+		return make_response.MakeInfoResponse(ctx, fiber.StatusOK, 0, "password successful deleted")
 	}
 }
