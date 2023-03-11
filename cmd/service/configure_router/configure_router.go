@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/golovpeter/passbox_backend/internal/api/handlers/auth/log_out"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/auth/login"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/auth/refresh_tokens"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/auth/register"
@@ -31,8 +32,9 @@ func ConfigureRouter(app *fiber.App, db *sqlx.DB) {
 	app.Post("api/register", register.Register(db))
 	app.Post("api/auth/login", login.Login(db))
 	app.Post("api/refresh-tokens", refresh_tokens.RefreshTokens(db))
+	app.Delete("api/log-out", log_out.LogOut(db))
 
-	//Main endpoints
+	//Private endpoints
 	app.Post("api/p/add-password", add_password.AddPassword(db))
 	app.Post("api/p/delete-password", delete_password.DeletePassword(db))
 	app.Get("api/p/get-all-passwords", get_all_passwords.GetAllNotes(db))
