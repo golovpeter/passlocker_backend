@@ -40,7 +40,7 @@ func DeletePassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 				ctx,
 				fiber.StatusBadRequest,
 				1,
-				"this note belongs to another user",
+				"this password belongs to another user",
 			)
 		}
 
