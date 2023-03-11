@@ -11,11 +11,6 @@ import (
 func GetAllNotes(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		accessToken, err := parse_headers.ParseAuthHeader(ctx)
-
-		if err != nil {
-			return make_response.MakeInfoResponse(ctx, fiber.StatusUnprocessableEntity, 1, err.Error())
-		}
-
 		claims, err := auth_tokens.GetTokenClaims(accessToken)
 
 		if err != nil {

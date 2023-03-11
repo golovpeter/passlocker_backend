@@ -14,10 +14,6 @@ func DeletePassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 
 		accessToken, err := parse_headers.ParseAuthHeader(ctx)
 
-		if err != nil {
-			return make_response.MakeInfoResponse(ctx, fiber.StatusUnprocessableEntity, 1, err.Error())
-		}
-
 		if err = ctx.BodyParser(&in); err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusUnprocessableEntity, 1, err.Error())
 		}
