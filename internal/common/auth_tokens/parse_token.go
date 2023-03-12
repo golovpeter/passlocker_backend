@@ -26,7 +26,7 @@ func ValidateToken(inputToken string) error {
 func GetTokenClaims(inputToken string) (jwt.MapClaims, error) {
 	claims := jwt.MapClaims{}
 	_, _ = jwt.ParseWithClaims(inputToken, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SIGNINKEY")), nil
+		return []byte(os.Getenv("JWT_KEY")), nil
 	})
 
 	return claims, nil

@@ -31,7 +31,7 @@ func ConfigureRouter(app *fiber.App, db *sqlx.DB) {
 	//Authentication endpoints
 	app.Post("api/register", register.Register(db))
 	app.Post("api/auth/login", login.Login(db))
-	app.Post("api/refresh-tokens", refresh_tokens.RefreshTokens(db))
+	app.Get("api/refresh-tokens", refresh_tokens.RefreshTokens(db))
 	app.Delete("api/log-out", log_out.LogOut(db))
 
 	//Private endpoints
