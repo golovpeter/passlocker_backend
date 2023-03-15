@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      POSTGRESQL_URL: 'postgres://postgres:postgres@db:1234/postgres?sslmode=disable'
+      PORT: :8080
+      JWT_KEY: VHTFsNM1Am
+    networks:
+      - app-network
+  db:
+    image: postgres:13.4
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    expose:
+      - "1234"
+    command: 
+      -p 1234
+    ports:
+      - "1234:1234"
+    networks:
+      - app-network
+  # migrate:
+  #       image: migrate/migrate
+  #       networks:
+  #           - app-network
+  #       volumes:
+  #           - .:/migrations
+  #       command: ["-path", "db/migration", "-database",  "postgres://postgres:postgres@db:5432/postgres?sslmode=disable", "up"]
+  #       links: 
+  #           - db
+  #       depends_on:
+  #           - db
+
+networks:
+  app-network:
+
+volumes:
+  db-data:
