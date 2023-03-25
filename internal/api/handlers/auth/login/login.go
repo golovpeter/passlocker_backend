@@ -6,6 +6,7 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
@@ -24,28 +25,38 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		err := conn.Get(&elementExist, "select exists(select email from users where email = $1)", in.Email)
 
 		if err != nil {
-			return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, err.Error())
+			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
 		}
 
 		if !elementExist {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "The user is not registered!")
 		}
 
-		var userId int
-		err = conn.Get(&userId, "select user_id from users where email = $1", in.Email)
+		var userData User
+		err = conn.Get(&userData, "select user_id, email, password_hash from users where email = $1", in.Email)
+
+		if err != nil {
+			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(userData.HashPassword), []byte(in.Password))
+
+		if in.Email != userData.Email || err != nil {
+			return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, "Incorrect email or password!")
+		}
 
 		newDeviceID := uuid.New()
-		newAccessToken, err := auth_tokens.GenerateJWT(userId, in.Email, newDeviceID.String(), auth_tokens.TokenTTL)
+		newAccessToken, err := auth_tokens.GenerateJWT(userData.UserID, in.Email, newDeviceID.String(), auth_tokens.TokenTTL)
 		if err != nil {
 			return err
 		}
 
-		newRefreshToken, err := auth_tokens.GenerateJWT(userId, in.Email, newDeviceID.String(), auth_tokens.RefreshTokenTTL)
+		newRefreshToken, err := auth_tokens.GenerateJWT(userData.UserID, in.Email, newDeviceID.String(), auth_tokens.RefreshTokenTTL)
 		if err != nil {
 			return err
 		}
 
-		_, err = conn.Exec("insert into tokens values ($1, $2, $3, $4)", userId, newDeviceID, newAccessToken, newRefreshToken)
+		_, err = conn.Exec("insert into tokens values ($1, $2, $3, $4)", userData.UserID, newDeviceID, newAccessToken, newRefreshToken)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
