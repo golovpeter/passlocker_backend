@@ -14,9 +14,13 @@ import (
 
 func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		refreshToken := ctx.Cookies("refresh_token")
+		var in refreshIn
 
-		err := auth_tokens.ValidateToken(refreshToken)
+		if err := ctx.BodyParser(&in); err != nil {
+			return make_response.MakeInfoResponse(ctx, fiber.StatusUnprocessableEntity, 1, err.Error())
+		}
+
+		err := auth_tokens.ValidateToken(in.RefreshToken)
 
 		if err != nil && errors.Is(err, jwt.ErrTokenExpired) {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusUnauthorized, 1, "token is expired")
@@ -26,7 +30,7 @@ func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusUnauthorized, 1, err.Error())
 		}
 
-		claims, err := auth_tokens.GetTokenClaims(refreshToken)
+		claims, err := auth_tokens.GetTokenClaims(in.RefreshToken)
 
 		if err != nil {
 			return err
@@ -37,7 +41,7 @@ func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			&tokenExist,
 			"select exists(select refresh_token, device_id from tokens where device_id = $1 and refresh_token=$2)",
 			claims["DeviceID"],
-			refreshToken,
+			in.RefreshToken,
 		)
 
 		if err != nil {

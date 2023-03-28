@@ -23,7 +23,7 @@ func ConfigureRouter(app *fiber.App, db *sqlx.DB) {
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:3000",
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}))
 
 	app.Use("api/p/", check_auth.CheckAuth(db))
@@ -31,7 +31,7 @@ func ConfigureRouter(app *fiber.App, db *sqlx.DB) {
 	//Authentication endpoints
 	app.Post("api/register", register.Register(db))
 	app.Post("api/auth/login", login.Login(db))
-	app.Get("api/refresh-tokens", refresh_tokens.RefreshTokens(db))
+	app.Post("api/refresh-tokens", refresh_tokens.RefreshTokens(db))
 	app.Delete("api/log-out", log_out.LogOut(db))
 
 	//Private endpoints

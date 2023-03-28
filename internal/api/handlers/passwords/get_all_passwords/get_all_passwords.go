@@ -21,7 +21,7 @@ func GetAllNotes(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 
 		err = conn.Select(
 			&passwords,
-			"select service_name, link, email, login, password from passwords where user_id = $1",
+			"select id, service_name, link, email, login, password from passwords where user_id = $1",
 			claims["UserID"],
 		)
 
