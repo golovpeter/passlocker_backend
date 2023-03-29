@@ -13,6 +13,8 @@ import (
 func main() {
 	app := fiber.New()
 
+	app.Static("/", "../../static")
+
 	db := database.OpenConnection()
 	defer db.Close()
 
