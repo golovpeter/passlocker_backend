@@ -59,11 +59,4 @@ COPY --from=builder /go/bin/main /go/bin/main
 
 WORKDIR /go/bin
 
-# Copy other files.
-#COPY configs configs
-
-# Use an unprivileged user.
-#USER appuser:appuser
-
-# Run the main binary.
 ENTRYPOINT ["/go/bin/main", "--config", "configs/config.prod.yaml"]
