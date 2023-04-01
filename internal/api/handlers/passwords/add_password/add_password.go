@@ -32,8 +32,8 @@ func AddPassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		_, err = conn.Exec(
 			"insert into passwords (user_id, service_name, link, email, login, password) values ($1, $2, $3, $4, $5, $6)",
 			claims["UserID"],
-			in.Link,
 			in.ServiceName,
+			in.Link,
 			in.Email,
 			in.Login,
 			in.Password,

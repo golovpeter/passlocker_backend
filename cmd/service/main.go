@@ -18,6 +18,11 @@ func main() {
 
 	configure_router.ConfigureRouter(app, db)
 
+	app.Static("/", "../../static")
+	app.Get("/*", func(ctx *fiber.Ctx) error {
+		return ctx.SendFile("../../static/index.html")
+	})
+
 	if err := app.Listen(os.Getenv("PORT")); err != nil {
 		log.Fatalln(err)
 	}
