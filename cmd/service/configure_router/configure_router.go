@@ -22,7 +22,7 @@ func ConfigureRouter(app *fiber.App, db *sqlx.DB) {
 	}))
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000",
+		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}))
 
