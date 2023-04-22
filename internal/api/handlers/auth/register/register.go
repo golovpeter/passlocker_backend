@@ -30,10 +30,7 @@ func Register(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "User already registered!")
 		}
 
-		passwordHash, err := hash_passwords.HashPassword(in.Password)
-		if err != nil {
-			return err
-		}
+		passwordHash := hash_passwords.GeneratePasswordHash(in.Password)
 
 		_, err = conn.Exec("insert into users (email, password_hash) values ($1, $2)", in.Email, passwordHash)
 

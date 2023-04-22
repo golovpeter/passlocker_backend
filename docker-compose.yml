@@ -11,7 +11,7 @@ services:
       - db
     environment:
       POSTGRESQL_URL: 'postgres://postgres:postgres@db:1234/postgres?sslmode=disable'
-      PORT: :8080
+      PORT: 8080
       JWT_KEY: VHTFsNM1Am
     networks:
       - app-network

@@ -3,10 +3,10 @@ package login
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golovpeter/passbox_backend/internal/common/auth_tokens"
+	"github.com/golovpeter/passbox_backend/internal/common/hash_passwords"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
@@ -39,9 +39,7 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
 		}
 
-		err = bcrypt.CompareHashAndPassword([]byte(userData.HashPassword), []byte(in.Password))
-
-		if in.Email != userData.Email || err != nil {
+		if !hash_passwords.CompareHashAndPassword(in.Password, userData.HashPassword) || in.Email != userData.Email {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, "Incorrect email or password!")
 		}
 
