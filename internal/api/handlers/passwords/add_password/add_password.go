@@ -29,7 +29,7 @@ func AddPassword(db database.Database) func(ctx *fiber.Ctx) error {
 			return err
 		}
 
-		_, err = db.InsertPassword(int(claims["UserID"].(float64)), in.ServiceName, in.Link, in.Email, in.Link, in.Login)
+		_, err = db.InsertPassword(int(claims["UserID"].(float64)), in.ServiceName, in.Link, in.Email, in.Login, in.Password)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
