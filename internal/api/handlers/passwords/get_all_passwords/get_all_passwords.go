@@ -5,10 +5,10 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/common/auth_tokens"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/golovpeter/passbox_backend/internal/common/parse_headers"
-	"github.com/jmoiron/sqlx"
+	"github.com/golovpeter/passbox_backend/internal/database"
 )
 
-func GetAllNotes(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
+func GetAllNotes(db database.Database) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		accessToken, err := parse_headers.ParseAuthHeader(ctx)
 		claims, err := auth_tokens.GetTokenClaims(accessToken)
@@ -17,13 +17,15 @@ func GetAllNotes(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return err
 		}
 
-		passwords := make([]passwordsOut, 0)
+		passwords := make([]PasswordsOut, 0)
 
-		err = conn.Select(
-			&passwords,
-			"select id, service_name, link, email, login, password from passwords where user_id = $1",
-			claims["UserID"],
-		)
+		//err = conn.Select(
+		//	&passwords,
+		//	"select id, service_name, link, email, login, password from passwords where user_id = $1",
+		//	claims["UserID"],
+		//)
+
+		err = db.SelectAllPasswords(&passwords, int(claims["UserID"].(float64)))
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())

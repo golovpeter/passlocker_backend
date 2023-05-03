@@ -5,10 +5,10 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/common/auth_tokens"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/golovpeter/passbox_backend/internal/common/parse_headers"
-	"github.com/jmoiron/sqlx"
+	"github.com/golovpeter/passbox_backend/internal/database"
 )
 
-func DeletePassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
+func DeletePassword(db database.Passwords) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var in deletePasswordIn
 
@@ -25,7 +25,7 @@ func DeletePassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		var passwordUserId int
-		err = conn.Get(&passwordUserId, "select user_id from passwords where id = $1", in.PasswordID)
+		err = db.SelectPasswordUserID(&passwordUserId, in.PasswordID)
 
 		if passwordUserId == 0 {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "there is no such password")
@@ -40,7 +40,7 @@ func DeletePassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			)
 		}
 
-		_, err = conn.Exec("delete from passwords where id = $1", in.PasswordID)
+		_, err = db.DeletePassword(in.PasswordID)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())

@@ -7,12 +7,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/golovpeter/passbox_backend/internal/common/auth_tokens"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
-	"github.com/jmoiron/sqlx"
+	"github.com/golovpeter/passbox_backend/internal/database"
 )
 
 // TODO: подумать, надо ли тут передавать access_token
 
-func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
+func RefreshTokens(db database.Database) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var in refreshIn
 
@@ -37,12 +37,7 @@ func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		tokenExist := false
-		err = conn.Get(
-			&tokenExist,
-			"select exists(select refresh_token, device_id from tokens where device_id = $1 and refresh_token=$2)",
-			claims["DeviceID"],
-			in.RefreshToken,
-		)
+		err = db.ExistRefreshToken(&tokenExist, claims["DeviceID"].(string), in.RefreshToken)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
@@ -74,12 +69,7 @@ func RefreshTokens(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return err
 		}
 
-		_, err = conn.Exec(
-			"update tokens set access_token=$1, refresh_token=$2 where device_id = $3",
-			newAccessToken,
-			newRefreshToken,
-			claims["DeviceID"].(string),
-		)
+		_, err = db.UpdateTokens(newAccessToken, newRefreshToken, claims["DeviceID"].(string))
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())

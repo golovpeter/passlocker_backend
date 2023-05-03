@@ -1,6 +1,6 @@
 package get_all_passwords
 
-type passwordsOut struct {
+type PasswordsOut struct {
 	ID          int    `db:"id" json:"id"`
 	ServiceName string `db:"service_name" json:"serviceName"`
 	Link        string `db:"link" json:"link"`

@@ -5,11 +5,11 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/common/auth_tokens"
 	"github.com/golovpeter/passbox_backend/internal/common/hash_passwords"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
+	"github.com/golovpeter/passbox_backend/internal/database"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
-func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
+func Login(db database.Database) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var in loginIn
 
@@ -22,7 +22,7 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		elementExist := false
-		err := conn.Get(&elementExist, "select exists(select email from users where email = $1)", in.Email)
+		err := db.ExistUser(&elementExist, in.Email)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
@@ -33,7 +33,7 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		var userData User
-		err = conn.Get(&userData, "select user_id, email, password_hash from users where email = $1", in.Email)
+		err = db.SelectUserData(&userData, in.Email)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
@@ -54,8 +54,7 @@ func Login(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return err
 		}
 
-		_, err = conn.Exec("insert into tokens values ($1, $2, $3, $4)", userData.UserID, newDeviceID, newAccessToken, newRefreshToken)
-
+		_, err = db.InsertTokens(userData.UserID, newDeviceID, newAccessToken, newRefreshToken)
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
 		}

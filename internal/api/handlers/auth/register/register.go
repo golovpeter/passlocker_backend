@@ -4,10 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golovpeter/passbox_backend/internal/common/hash_passwords"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
-	"github.com/jmoiron/sqlx"
+	"github.com/golovpeter/passbox_backend/internal/database"
 )
 
-func Register(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
+func Register(db database.Database) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var in registerIn
 
@@ -20,7 +20,7 @@ func Register(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 		}
 
 		elementExist := false
-		err := conn.Get(&elementExist, "select exists(select email from users where email = $1)", in.Email)
+		err := db.ExistUser(&elementExist, in.Email)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, err.Error())
@@ -32,7 +32,7 @@ func Register(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 
 		passwordHash := hash_passwords.GeneratePasswordHash(in.Password)
 
-		_, err = conn.Exec("insert into users (email, password_hash) values ($1, $2)", in.Email, passwordHash)
+		_, err = db.InsertUser(in.Email, passwordHash)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusInternalServerError, 1, err.Error())

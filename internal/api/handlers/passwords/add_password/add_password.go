@@ -5,10 +5,10 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/common/auth_tokens"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/golovpeter/passbox_backend/internal/common/parse_headers"
-	"github.com/jmoiron/sqlx"
+	"github.com/golovpeter/passbox_backend/internal/database"
 )
 
-func AddPassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
+func AddPassword(db database.Database) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var in addPasswordIn
 
@@ -29,22 +29,14 @@ func AddPassword(conn *sqlx.DB) func(ctx *fiber.Ctx) error {
 			return err
 		}
 
-		_, err = conn.Exec(
-			"insert into passwords (user_id, service_name, link, email, login, password) values ($1, $2, $3, $4, $5, $6)",
-			claims["UserID"],
-			in.ServiceName,
-			in.Link,
-			in.Email,
-			in.Login,
-			in.Password,
-		)
+		_, err = db.InsertPassword(int(claims["UserID"].(float64)), in.ServiceName, in.Link, in.Email, in.Link, in.Login)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())
 		}
 
 		var passwordID int
-		err = conn.Get(&passwordID, "select max(id) from passwords")
+		err = db.SelectMaxPasswordID(&passwordID)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())

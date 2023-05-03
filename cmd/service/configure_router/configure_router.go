@@ -12,10 +12,10 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/passwords/delete_password"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/passwords/get_all_passwords"
 	"github.com/golovpeter/passbox_backend/internal/api/middlewares/check_auth"
-	"github.com/jmoiron/sqlx"
+	"github.com/golovpeter/passbox_backend/internal/database"
 )
 
-func ConfigureRouter(app *fiber.App, db *sqlx.DB) {
+func ConfigureRouter(app *fiber.App, db database.Database) {
 	//Middlewares
 	app.Use(logger.New(logger.Config{
 		Format: "[${ip}]:${port} ${time} ${status} - ${method} ${path}\n",

@@ -1,5 +1,6 @@
 package add_password
 
+// TODO: сделать все json поля в snake-кейсе
 type addPasswordIn struct {
 	ServiceName string `json:"serviceName"`
 	Link        string `json:"link"`
