@@ -3,7 +3,6 @@ package configure_router
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/auth/log_out"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/auth/login"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/auth/refresh_tokens"
@@ -12,14 +11,14 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/passwords/delete_password"
 	"github.com/golovpeter/passbox_backend/internal/api/handlers/passwords/get_all_passwords"
 	"github.com/golovpeter/passbox_backend/internal/api/middlewares/check_auth"
+	"github.com/golovpeter/passbox_backend/internal/config"
 	"github.com/golovpeter/passbox_backend/internal/database"
 )
 
-func ConfigureRouter(app *fiber.App, db database.Database) {
+func ConfigureRouter(app *fiber.App, db database.Database, logger fiber.Handler, config *config.Config) {
+
 	//Middlewares
-	app.Use(logger.New(logger.Config{
-		Format: "[${ip}]:${port} ${time} ${status} - ${method} ${path}\n",
-	}))
+	app.Use(logger)
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
@@ -30,8 +29,8 @@ func ConfigureRouter(app *fiber.App, db database.Database) {
 
 	//Authentication endpoints
 	app.Post("api/register", register.Register(db))
-	app.Post("api/auth/login", login.Login(db))
-	app.Post("api/refresh-tokens", refresh_tokens.RefreshTokens(db))
+	app.Post("api/auth/login", login.Login(db, config))
+	app.Post("api/refresh-tokens", refresh_tokens.RefreshTokens(db, config))
 	app.Delete("api/log-out", log_out.LogOut(db))
 
 	//Private endpoints

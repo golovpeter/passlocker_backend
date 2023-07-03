@@ -2,6 +2,7 @@ package refresh_tokens
 
 import (
 	"errors"
+	"github.com/golovpeter/passbox_backend/internal/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -12,7 +13,7 @@ import (
 
 // TODO: подумать, надо ли тут передавать access_token
 
-func RefreshTokens(db database.Database) func(ctx *fiber.Ctx) error {
+func RefreshTokens(db database.Database, config *config.Config) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var in refreshIn
 
@@ -48,6 +49,7 @@ func RefreshTokens(db database.Database) func(ctx *fiber.Ctx) error {
 		}
 
 		newAccessToken, err := auth_tokens.GenerateJWT(
+			config,
 			int(claims["UserID"].(float64)),
 			claims["Email"].(string),
 			claims["DeviceID"].(string),
@@ -59,6 +61,7 @@ func RefreshTokens(db database.Database) func(ctx *fiber.Ctx) error {
 		}
 
 		newRefreshToken, err := auth_tokens.GenerateJWT(
+			config,
 			int(claims["UserID"].(float64)),
 			claims["Email"].(string),
 			claims["DeviceID"].(string),

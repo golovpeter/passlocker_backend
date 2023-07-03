@@ -1,15 +1,14 @@
 package postgresql
 
 import (
-	"os"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 )
 
-func OpenConnection() *sqlx.DB {
-	db, err := sqlx.Connect("pgx", os.Getenv("POSTGRESQL_URL"))
+func OpenConnection(dbUrl string) *sqlx.DB {
+	db, err := sqlx.Connect("pgx", dbUrl)
 
 	if err != nil {
 		panic(err)

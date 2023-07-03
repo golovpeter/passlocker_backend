@@ -5,11 +5,12 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/common/auth_tokens"
 	"github.com/golovpeter/passbox_backend/internal/common/hash_passwords"
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
+	"github.com/golovpeter/passbox_backend/internal/config"
 	"github.com/golovpeter/passbox_backend/internal/database"
 	"github.com/google/uuid"
 )
 
-func Login(db database.Database) func(ctx *fiber.Ctx) error {
+func Login(db database.Database, config *config.Config) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var in loginIn
 
@@ -44,12 +45,12 @@ func Login(db database.Database) func(ctx *fiber.Ctx) error {
 		}
 
 		newDeviceID := uuid.New()
-		newAccessToken, err := auth_tokens.GenerateJWT(userData.UserID, in.Email, newDeviceID.String(), auth_tokens.TokenTTL)
+		newAccessToken, err := auth_tokens.GenerateJWT(config, userData.UserID, in.Email, newDeviceID.String(), auth_tokens.TokenTTL)
 		if err != nil {
 			return err
 		}
 
-		newRefreshToken, err := auth_tokens.GenerateJWT(userData.UserID, in.Email, newDeviceID.String(), auth_tokens.RefreshTokenTTL)
+		newRefreshToken, err := auth_tokens.GenerateJWT(config, userData.UserID, in.Email, newDeviceID.String(), auth_tokens.RefreshTokenTTL)
 		if err != nil {
 			return err
 		}

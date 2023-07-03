@@ -10,9 +10,9 @@ type Config struct {
 	Conn *sqlx.DB
 }
 
-func NewDatabase() *Config {
+func NewDatabase(dbUrl string) *Config {
 	return &Config{
-		Conn: OpenConnection(),
+		Conn: OpenConnection(dbUrl),
 	}
 }
 

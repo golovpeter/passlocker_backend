@@ -19,12 +19,6 @@ func GetAllNotes(db database.Database) func(ctx *fiber.Ctx) error {
 
 		passwords := make([]PasswordsOut, 0)
 
-		//err = conn.Select(
-		//	&passwords,
-		//	"select id, service_name, link, email, login, password from passwords where user_id = $1",
-		//	claims["UserID"],
-		//)
-
 		err = db.SelectAllPasswords(&passwords, int(claims["UserID"].(float64)))
 
 		if err != nil {

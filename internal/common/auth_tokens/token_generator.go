@@ -1,10 +1,10 @@
 package auth_tokens
 
 import (
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/golovpeter/passbox_backend/internal/config"
 )
 
 const (
@@ -19,7 +19,7 @@ type tokenClaims struct {
 	DeviceID string
 }
 
-func GenerateJWT(userID int, email string, deviceID string, expTime time.Duration) (string, error) {
+func GenerateJWT(config *config.Config, userID int, email string, deviceID string, expTime time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.RegisteredClaims{
 			ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(expTime)},
@@ -30,5 +30,5 @@ func GenerateJWT(userID int, email string, deviceID string, expTime time.Duratio
 		deviceID,
 	})
 
-	return token.SignedString([]byte(os.Getenv("JWT_KEY")))
+	return token.SignedString([]byte(config.JwtKey))
 }
