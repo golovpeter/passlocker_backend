@@ -6,16 +6,16 @@ import (
 	"github.com/golovpeter/passbox_backend/internal/common/make_response"
 	"github.com/golovpeter/passbox_backend/internal/common/parse_headers"
 	"github.com/golovpeter/passbox_backend/internal/database"
+	"strconv"
 )
 
 func DeletePassword(db database.Passwords) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		var in deletePasswordIn
-
 		accessToken, err := parse_headers.ParseAuthHeader(ctx)
 
-		if err = ctx.BodyParser(&in); err != nil {
-			return make_response.MakeInfoResponse(ctx, fiber.StatusUnprocessableEntity, 1, err.Error())
+		passwordID, err := strconv.Atoi(ctx.Params("id"))
+		if err != nil {
+			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "invalid id")
 		}
 
 		claims, err := auth_tokens.GetTokenClaims(accessToken)
@@ -25,7 +25,7 @@ func DeletePassword(db database.Passwords) func(ctx *fiber.Ctx) error {
 		}
 
 		var passwordUserId int
-		err = db.SelectPasswordUserID(&passwordUserId, in.PasswordID)
+		err = db.SelectPasswordUserID(&passwordUserId, passwordID)
 
 		if passwordUserId == 0 {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, "there is no such password")
@@ -40,7 +40,7 @@ func DeletePassword(db database.Passwords) func(ctx *fiber.Ctx) error {
 			)
 		}
 
-		_, err = db.DeletePassword(in.PasswordID)
+		_, err = db.DeletePassword(passwordID)
 
 		if err != nil {
 			return make_response.MakeInfoResponse(ctx, fiber.StatusBadRequest, 1, err.Error())

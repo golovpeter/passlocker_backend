@@ -35,6 +35,6 @@ func ConfigureRouter(app *fiber.App, db database.Database, logger fiber.Handler,
 
 	//Private endpoints
 	app.Post("api/p/add-password", add_password.AddPassword(db))
-	app.Post("api/p/delete-password", delete_password.DeletePassword(db))
+	app.Delete("api/p/delete-password/:id", delete_password.DeletePassword(db))
 	app.Get("api/p/get-all-passwords", get_all_passwords.GetAllNotes(db))
 }
