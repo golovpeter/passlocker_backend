@@ -10,7 +10,7 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		DbPath: os.Getenv("POSTGRES_URL"),
+		DbPath: os.Getenv("POSTGRESQL_URL"),
 		JwtKey: os.Getenv("JWT_KEY"),
 		Port:   os.Getenv("PORT"),
 	}
